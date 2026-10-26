@@ -8,12 +8,33 @@ dataset ready for statistical modeling and exploratory data analysis.
 """
 
 import os
+from pathlib import Path
 import pandas as pd
 import numpy as np
 
 
-def load_dataset(filepath: str = "Video_Game_Sales.csv") -> pd.DataFrame:
+def find_default_paths():
+    """Resolve raw input and processed output paths regardless of invocation directory."""
+    candidate_raw_paths = [
+        Path("data/raw/Video_Game_Sales.csv"),
+        Path("../data/raw/Video_Game_Sales.csv"),
+        Path("Video_Game_Sales.csv"),
+        Path("../Video_Game_Sales.csv")
+    ]
+    raw_path = next((p for p in candidate_raw_paths if p.exists()), candidate_raw_paths[0])
+
+    if raw_path.parent.name == "raw":
+        output_path = raw_path.parent.parent / "processed" / "Video_Game_Sales_Cleaned.csv"
+    else:
+        output_path = Path("Video_Game_Sales_Cleaned.csv")
+
+    return str(raw_path), str(output_path)
+
+
+def load_dataset(filepath: str = None) -> pd.DataFrame:
     """Load the raw video game sales dataset."""
+    if filepath is None:
+        filepath, _ = find_default_paths()
     if not os.path.exists(filepath):
         raise FileNotFoundError(f"Dataset not found at {filepath}")
     return pd.read_csv(filepath)
@@ -68,10 +89,9 @@ def clean_dataset(df: pd.DataFrame, critical_features=None) -> pd.DataFrame:
 
 
 def main():
-    raw_path = "Video_Game_Sales.csv"
-    output_path = "Video_Game_Sales_Cleaned.csv"
+    raw_path, output_path = find_default_paths()
 
-    print("Loading raw video game sales dataset...")
+    print(f"Loading raw video game sales dataset from: {raw_path}")
     raw_df = load_dataset(raw_path)
     inspect_dataset(raw_df)
 
@@ -90,8 +110,9 @@ def main():
     print("\nRemaining Missing Values:")
     print(cleaned_df.isnull().sum())
 
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     cleaned_df.to_csv(output_path, index=False)
-    print(f"\nCleaned dataset successfully exported to '{output_path}'")
+    print(f"\nCleaned dataset successfully exported to: '{output_path}'")
 
 
 if __name__ == "__main__":

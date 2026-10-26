@@ -149,15 +149,15 @@ Video-Game-Sales-Analysis-CSMODEL/
    ```
 
 ### Running Data Cleaning
-Run the data cleaning script to inspect raw distributions and generate the cleaned CSV:
+Run the data cleaning script from the repository root to inspect raw distributions and export the cleaned dataset:
 ```bash
-python data_cleaning.py
+python src/data_cleaning.py
 ```
 
 ### Running the Jupyter Notebook
 Launch Jupyter Notebook or JupyterLab to interact with the full statistical analysis:
 ```bash
-jupyter notebook CSMODEL_MCO.ipynb
+jupyter notebook notebooks/CSMODEL_MCO.ipynb
 ```
 
 ---
